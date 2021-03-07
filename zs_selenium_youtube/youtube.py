@@ -597,33 +597,37 @@ class Youtube(SeleniumUploaderAccount):
                     video_urls.append(link)
         
             for url in video_urls:
-                self.browser.get(url)
-                time.sleep(2)
-
-                description_cointainer = self.browser.find_by('div', id='description-container')
-
-                if not description_cointainer:
-                    return
-
-                description_field = self.browser.find_by('div', {"id":"textbox", "slot":"input"}, in_element=description_cointainer)
-                if description_field:
-                    description = description_field.text
+                self.__activate_video(url, affiliate_tag)
                 
-                description=description.replace('tag=lurker0c-20', 'tag=shark00f-20')
-                description_field.click()
-                time.sleep(0.5)
-                description_field.clear()
-                time.sleep(0.5)
-                description_field.send_keys(description)
-                time.sleep(1)
-                first_attempt = self.browser.find_by('ytcp-video-metadata-visibility', class_='style-scope ytcp-video-metadata-editor-sidepanel', timeout=15).click()
+                
+    def __activate_video(self, url: str, affiliate_tag: str) -> None:
+        self.browser.get(url)
+        time.sleep(2)
 
-                self.browser.find_by('paper-radio-button', class_='style-scope ytcp-video-visibility-select', name='PUBLIC').click()
-                time.sleep(0.5)
-                self.browser.find_by('ytcp-button', id='save-button').click()
-                time.sleep(0.5)
-                self.browser.find_by('ytcp-button', id='save').click()
-                time.sleep(1)
+        description_cointainer = self.browser.find_by('div', id='description-container')
+
+        if not description_cointainer:
+            return
+
+        description_field = self.browser.find_by('div', {"id":"textbox", "slot":"input"}, in_element=description_cointainer)
+        if description_field:
+            description = description_field.text
+        
+        description=description.replace('lurker0c-20', affiliate_tag)
+        description_field.click()
+        time.sleep(0.5)
+        description_field.clear()
+        time.sleep(0.5)
+        description_field.send_keys(description)
+        time.sleep(1)
+        self.browser.find_by('ytcp-video-metadata-visibility', class_='style-scope ytcp-video-metadata-editor-sidepanel', timeout=15).click()
+
+        self.browser.find_by('paper-radio-button', class_='style-scope ytcp-video-visibility-select', name='PUBLIC').click()
+        time.sleep(0.5)
+        self.browser.find_by('ytcp-button', id='save-button').click()
+        time.sleep(0.5)
+        self.browser.find_by('ytcp-button', id='save').click()
+        time.sleep(1)
 
     # ------------------------------------------------------- Private methods -------------------------------------------------------- #
 
